@@ -1,1 +1,2 @@
-# Git Course
+# Google Capstone project
+
