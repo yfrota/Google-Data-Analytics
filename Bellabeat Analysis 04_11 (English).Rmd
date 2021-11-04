@@ -1,0 +1,433 @@
+---
+title: "Bellabeat Analysis - Google Capstone Project"
+author: "Yuri Faria Frota"
+date: "31/10/2021"
+output: html_document
+---
+
+# **Bellabeat**
+
+Bellabeat is a a high-tech manufacturer of health-focused products for women, founded by Urška Sršen and Sando Mur.
+Sršen used her background as an artist to develop beautifully designed technology that informs and inspires women around the world. 
+Founded in 2013, Bellabeat has grown rapidly and quickly positioned itself as a tech-driven wellness company for women.
+Sršen knows that an analysis of Bellabeat’s available consumer data would reveal more opportunities for growth. She has asked the marketing analytics team to focus on a Bellabeat product and analyze smart device usage data in order to gain insight into how people are already using their smart devices. 
+Using this information, she would like high-level recommendations for how these trends can inform Bellabeat marketing strategy.  
+
+Link to Webpage for more information <https://bellabeat.com/>
+
+## **PHASE 1 – ASK **
+By the data collected from smart devices (as calories burn, time of activities, daily data about sleep quality, among others), we gonna be able to get some insights about how to improve Bellabeat devices, and better meet the customers demands.
+Desta forma, os clientes Bellabeat terão mais conhecimento sobre seus hábitos, seu corpo, e sobre como promover uma vida saudável, proporcionando melhor qualidade de vida. 
+Doing that, Bellabeat customers will have more knowledge about their habits, your body, and about how to promote a healthy life, providing better life quality.
+The analysis from this dataset can help bellabeat to stand out, being able to offer demands never offered before.
+
+The main objetives of this analysis, are to offer:
+* 	Bring new insights from other smart devices data analysis
+*	Pattern and tendencies coming from data.
+*	Proposals for improvements in Bellabeat devices.
+*	Possibilidades de novas demandas, a partir da análise dos dados
+*	Possibilities of new demands, arrising through data analysis
+*	Valuable informations for Bellabeat marketing, and strategy department.
+
+We gonna use **Leaf**, from the website catalog, as a reference for this study.
+
+
+## **PHASE 2 – PREPARE **
+
+This phase consists on the beginning of the analysis process. We gonna check which kind of data is available, your formats, credibility, and also check with kind of information we could get from it.
+For knowing about the quality of the data set used, we gonna utilize ROCCC methodology, on which focus on five basic criteria to ensure quality. For this, the data set must have:
+
+#### *Reliability*: 
+The small sample set (around 30 users), and some statistical variables missing, restrict the possibility for further analysis.
+
+#### *Originality*:
+Not from original source, it is a third party data, collected from Amazon Mechanical Turk.
+
+#### *Comprehensiveness*:
+The data doesn’t give sex, age, and other specific conditions about the users, on which could result in more accurated results. Do not consider those elements can lead to biased results.
+
+#### *Current*:
+The data was collected in 2016. Even though it’s an outdated dataset, people habits doesn’t tend to change quickly in few years.  
+
+#### *Cited*:
+  Data collected from Amazon Mechanical Murk, and well documented.
+
+Through the observations made, we can consider a lack of data quantity and quality, making more accurate analysis difficult.
+
+Saying that, we gonna get some insights from this analysis, and turn out our findings into a starting point for next analysis.
+
+
+## Setting up the environment.
+Installing and loading the packages we gonna use.
+
+
+```{r loading packages, echo=TRUE, warning=FALSE}
+library(readr)
+library(tidyverse)
+library(sqldf)
+library(ggplot2)
+library(gridExtra)
+```
+
+
+## Importing data
+
+```{r Importing data, echo=TRUE, message=FALSE, warning=FALSE}
+sleepDay_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/sleepDay_merged.csv")
+weightLogInfo_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/weightLogInfo_merged.csv")
+minuteSleep_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteSleep_merged.csv")
+minuteStepsNarrow_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteStepsNarrow_merged.csv")
+minuteIntensitiesWide_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteIntensitiesWide_merged.csv")
+minuteMETsNarrow_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteMETsNarrow_merged.csv")
+minuteCaloriesWide_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteCaloriesWide_merged.csv")
+minuteIntensitiesNarrow_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteIntensitiesNarrow_merged.csv")
+hourlyCalories_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/hourlyCalories_merged.csv")
+hourlyIntensities_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/hourlyIntensities_merged.csv")
+hourlySteps_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/hourlySteps_merged.csv")
+minuteCaloriesNarrow_merged <- read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/minuteCaloriesNarrow_merged.csv")
+dailyactivity_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/dailyActivity_merged.csv")
+dailyCalories_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/dailyCalories_merged.csv")
+dailyIntensities_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/dailyIntensities_merged.csv")
+dailySteps_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/dailySteps_merged.csv")
+heartrate_seconds_merged <-read_csv("C:/Users/Yuri/Documents/capstone project/fitbit_fitnesstrack_data/heartrate_seconds_merged.csv")
+```
+
+
+## Checking data
+
+We gonna use the dataframe 'dailyactivity_merged' to show a major inspection of the general data.
+
+```{r data check, echo=TRUE, message=FALSE, warning=FALSE}
+colnames(dailyactivity_merged)
+head(dailyactivity_merged)
+nrow(dailyactivity_merged)
+glimpse(dailyactivity_merged)
+
+```
+**Using same functions for all the sets below**
+
+*(sleepDay_merged)*
+```{r message=FALSE, warning=FALSE, include=FALSE}
+colnames(sleepDay_merged)
+head(sleepDay_merged)
+nrow(sleepDay_merged)
+glimpse(sleepDay_merged)
+```
+
+*(dailyIntensities_merged)*
+```{r message=FALSE, warning=FALSE, include=FALSE}
+colnames(dailyIntensities_merged)
+head(dailyIntensities_merged)
+nrow(dailyIntensities_merged)
+glimpse(dailyIntensities_merged)
+```
+
+*(dailyCalories_merged)*
+```{r message=FALSE, warning=FALSE, include=FALSE}
+colnames(dailyCalories_merged)
+head(dailyCalories_merged)
+nrow(dailyCalories_merged)
+glimpse(dailyCalories_merged)
+```
+
+*(weightLogInfo_merged)*
+```{r message=FALSE, warning=FALSE, include=FALSE}
+colnames(weightLogInfo_merged)
+head(weightLogInfo_merged)
+nrow(weightLogInfo_merged)
+glimpse(weightLogInfo_merged)
+```
+*(dailySteps_merged)*
+```{r message=FALSE, warning=FALSE, include=FALSE}
+colnames(dailySteps_merged)
+head(dailySteps_merged)
+nrow(dailySteps_merged)
+glimpse(dailySteps_merged)
+```
+
+
+## Verifying data integrity
+
+**Let’s verify how many diferente people are in each data set.**
+(Separating the distinct Id, and counting the resulting lines).
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+teste1 <- sqldf ('SELECT DISTINCT Id FROM "dailyCalories_merged"')
+nrow(teste1)
+
+teste2 <- sqldf ('SELECT DISTINCT Id FROM "dailyactivity_merged"')
+nrow(teste2)
+
+teste3 <- sqldf ('SELECT DISTINCT Id FROM "dailyIntensities_merged"')
+nrow(teste3)
+
+teste4 <- sqldf ('SELECT DISTINCT Id FROM "dailySteps_merged"')
+nrow(teste4)
+
+teste5 <- sqldf ('SELECT DISTINCT Id FROM "sleepDay_merged"')
+nrow(teste5)
+
+teste6 <- sqldf ('SELECT DISTINCT Id FROM "weightLogInfo_merged"')
+nrow(teste6)
+
+```
+
+
+**Verifying how many days of data collected**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+n_distinct(dailyactivity_merged$ActivityDate)
+```
+**During this check, we could observe that both tables below had fewer registers than the other data frames.**
+
+*(weightLogInfo_merged)*
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+nrow(weightLogInfo_merged)
+n_distinct(weightLogInfo_merged$Id)
+```
+
+*(dailySteps_merged)*
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+nrow(sleepDay_merged)
+n_distinct(sleepDay_merged$Id)
+```
+**Both sets above are incomplete, as they don’t include all participants, and also have less registers. So, we won’t include those data frames into this analysis.**
+**We gonna proceed utilizing the daily tables, and verify if the columns with same name, has equal data between them.**
+**For this, we gonna use the following instructions:**
+
+**'dailyActivity_merged' ∩ 'dailyCalories_merged'**
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_activity1 <- dailyactivity_merged %>% select(Id, ActivityDate, Calories)
+check1 <- sqldf ('SELECT * FROM daily_activity1 INTERSECT SELECT * FROM dailyCalories_merged')
+nrow(check1)
+n_distinct(check1$Id)
+
+```
+
+**'dailyActivity_merged' ∩ 'dailyIntensities_merged'**
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_activity2 <- dailyactivity_merged %>% select(Id, ActivityDate, SedentaryMinutes, LightlyActiveMinutes, FairlyActiveMinutes, VeryActiveMinutes, SedentaryActiveDistance, LightActiveDistance, ModeratelyActiveDistance, VeryActiveDistance)
+check2 <- sqldf('SELECT * FROM daily_activity2 INTERSECT SELECT * FROM dailyIntensities_merged')
+nrow(check2)
+n_distinct(check2$Id)
+```
+
+**'dailyActivity_merged' ∩ 'dailySteps_merged'**
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_activity3 <- dailyactivity_merged %>%  select(Id, ActivityDate, TotalSteps)
+check3 <- sqldf('SELECT * FROM daily_activity3 INTERSECT SELECT * FROM dailySteps_merged')
+nrow(check3)
+n_distinct(check3$Id)
+```
+** The 940 rows between each of the intersections (check1, check2, e check3) confirm the hipothesis that all columns with same name between tables have the same data. Therefore we can use only the 'dailyActivity_merged' as a summary from all the data from other ‘daily’ tables. **
+
+## **PHASE 3 AND 4 – PROCESS AND ANALYZE**
+
+**Let’s now create a summary of some general characteristics from daily habits to start our analysis**
+
+```{r message=FALSE, warning=FALSE}
+dailyactivity_merged %>%  summary()
+
+```
+
+```{r message=FALSE, warning=FALSE}
+sleepDay_merged %>%  summary ()
+```
+
+**By the summany, we could reach some mean values:
+**Através do resumo, podemos obter a média diária de alguns dados:**
+
+* Daily Steps : 7638 
+
+* Distance: 5.490m / 5.49 km
+
+* Calories  :2304 kcal
+
+* Sedentary minutes  : 991.2 / 16.52 hours
+
+* Active minutes : 227.52 / 3.8 hours 
+
+* Sleep minutes : 419.5 / 7 hours
+
+**With this quick summary, we are able to predict some users general behaviors and characteristics:**
+
+**In general, they are sedentary (over 16 hours/day doing ‘sedentary activities’)**
+**They sleep little (Under 8 hours of sleep recommendation)
+
+
+**Let’s see some plots, to reach some valuable insights:**
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+daily_activity4 <- sqldf ('SELECT Id, ActivityDate,Calories, TotalSteps, TotalDistance, TrackerDistance, LoggedActivitiesDistance, (VeryActiveDistance+ModeratelyActiveDistance+LightActiveDistance) AS ActiveDistanceTotal,SedentaryActiveDistance, (VeryActiveMinutes+FairlyActiveMinutes+LightlyActiveMinutes) AS ActiveMinutesTotal, SedentaryMinutes FROM "dailyactivity_merged"')
+
+colnames(daily_activity4)
+nrow(daily_activity4)
+```
+
+
+
+```{r}
+distanciamaximaplot<- ggplot(data=dailyactivity_merged) +
+  geom_point(mapping=aes(x=TotalDistance, y= Calories, color = 'Orange'))+
+  labs (title = "TOTAL DISTANCE", subtitle = "in km ", 
+        x = "Total distance (km)", y = "Calories burn")+ 
+  theme(legend.position = "none") +
+  geom_smooth(method=lm,mapping = aes (x=TotalDistance, y= Calories ))
+
+
+tempoleveplot <- ggplot(data=dailyactivity_merged) +
+  geom_point(mapping=aes(x=LightlyActiveMinutes, y= Calories, color = 'Orange'))+
+  labs (title = "LIGHT ACTIVITY", subtitle = "in min ", x = "Light activity (min)", y = "Calories burn") +
+  theme(legend.position = "none") +
+  geom_smooth(method=lm, mapping = aes (x=LightlyActiveMinutes, y= Calories ))
+
+
+tempointensoplot <-ggplot(data=dailyactivity_merged) +
+  geom_point(mapping=aes(x=VeryActiveMinutes, y= Calories, color = 'Orange'))+
+  labs (title = "INTENSE ACTIVITY", subtitle = "em min ", x = "Intense activity (min)", y = "Calories burn") + 
+  theme(legend.position = "none") +
+  geom_smooth(method=lm,mapping = aes (x=VeryActiveMinutes, y= Calories ))
+
+
+tempoesedentarioplot<-ggplot(data=dailyactivity_merged) +
+  geom_point(mapping=aes(x=SedentaryMinutes, y= Calories, color = 'Orange'))+
+  labs (title = "SEDENTARY ACTIVITY", subtitle = "in min ", x = "Sedentary activity (min)", y = "Calories burn") +
+  theme(legend.position = "none") +
+  geom_smooth(method=lm, mapping = aes (x=SedentaryMinutes, y= Calories ))
+
+tempototalplot<-ggplot(data=daily_activity4) +
+  geom_point(mapping=aes(x=ActiveMinutesTotal, y= Calories, color = 'Orange'))+
+  labs (title = "TOTAL ACTIVITY", subtitle = "in min ", 
+        caption= "Created by Yuri Faria Frota", x = "Total activity (min)", y = "Calories burn") +
+  theme(legend.position = "none") +
+  geom_smooth(method=lm, mapping = aes (x=ActiveMinutesTotal, y= Calories ))
+```
+
+```{r}
+
+grid.arrange(tempoesedentarioplot, tempoleveplot, tempointensoplot, tempototalplot, nrow = 2)
+```
+
+**Note the difference in calories burn among different types of activity. It’s clear the importance of keep doing activities to reach an efficient calorie burn rate. **
+
+```{r}
+grid.arrange(distanciamaximaplot, tempototalplot, nrow = 1)
+```
+
+
+**Long walks, under light or fair activity, are also efficient to calories burn. **
+
+
+```{r}
+sedentario <- ggplot(data=dailyactivity_merged) + geom_point(mapping = aes (x=TotalSteps, y=Calories, color = SedentaryMinutes))
+
+leve <- ggplot(data=dailyactivity_merged) + geom_point(mapping = aes (x=TotalSteps, y=Calories, color = LightlyActiveMinutes))
+
+moderado <- ggplot(data=dailyactivity_merged) + geom_point(mapping = aes (x=TotalSteps, y=Calories, color = FairlyActiveMinutes))
+
+intenso <- ggplot(data=dailyactivity_merged) + geom_point(mapping = aes (x=TotalSteps, y=Calories, color = VeryActiveMinutes))
+
+```
+
+```{r}
+grid.arrange(sedentario, intenso, nrow = 2)
+```
+
+
+**The users longest time in activity is sedentary. Note that more activity leads to greater caloric consumption**
+
+```{r include=FALSE}
+novogeral <- sqldf ('SELECT * from "dailyactivity_merged"') 
+```
+
+
+```{r include=FALSE}
+semana1 <- sqldf ('SELECT *, CASE WHEN 
+       ActivityDate = "4/18/2016" OR ActivityDate = "4/25/2016" OR ActivityDate = "5/2/2016" OR ActivityDate = "5/9/2016" THEN "2-Monday"
+       WHEN ActivityDate = "4/12/2016" OR ActivityDate = "4/19/2016" OR ActivityDate = "4/26/2016" OR ActivityDate = "5/3/2016" OR ActivityDate = "5/10/2016" THEN "3-Tuesday" 
+       WHEN ActivityDate = "4/13/2016" OR ActivityDate = "4/20/2016" OR ActivityDate = "4/27/2016" OR ActivityDate = "5/4/2016" OR ActivityDate = "5/11/2016" THEN "4-Wednesday" 
+       WHEN ActivityDate = "4/14/2016" OR ActivityDate = "4/21/2016" OR ActivityDate = "4/28/2016" OR ActivityDate = "5/5/2016" OR ActivityDate = "5/12/2016" THEN "5-Thursday" 
+       WHEN ActivityDate = "4/15/2016" OR ActivityDate = "4/22/2016" OR ActivityDate = "4/29/2016" OR ActivityDate = "5/6/2016" THEN "6-Friday" 
+       WHEN ActivityDate = "4/16/2016" OR ActivityDate = "4/23/2016" OR ActivityDate = "4/30/2016" OR ActivityDate = "5/7/2016" THEN "7-Saturday" 
+       WHEN ActivityDate = "4/17/2016" OR ActivityDate = "4/24/2016" OR ActivityDate = "5/1/2016" OR ActivityDate = "5/8/2016" THEN "1-Sunday" 
+       ELSE 0 end as diadasemana FROM "novogeral" ')
+```
+
+```{r}
+semanasono <- sqldf ('SELECT Id, SleepDay , TotalMinutesAsleep, CASE WHEN 
+       SleepDay = "4/18/2016 12:00:00 AM" OR SleepDay = "4/25/2016 12:00:00 AM" OR SleepDay = "5/2/2016 12:00:00 AM" OR SleepDay = "5/9/2016 12:00:00 AM" THEN "2-Monday"
+       WHEN SleepDay = "4/12/2016 12:00:00 AM" OR SleepDay = "4/19/2016 12:00:00 AM" OR SleepDay = "4/26/2016 12:00:00 AM" OR SleepDay = "5/3/2016 12:00:00 AM" OR SleepDay = "5/10/2016 12:00:00 AM" THEN "3-Tuesday" 
+       WHEN SleepDay = "4/13/2016 12:00:00 AM" OR SleepDay = "4/20/2016 12:00:00 AM" OR SleepDay = "4/27/2016 12:00:00 AM" OR SleepDay = "5/4/2016 12:00:00 AM" OR SleepDay = "5/11/2016 12:00:00 AM" THEN "4-Wednesday" 
+       WHEN SleepDay = "4/14/2016 12:00:00 AM" OR SleepDay = "4/21/2016 12:00:00 AM" OR SleepDay = "4/28/2016 12:00:00 AM" OR SleepDay = "5/5/2016 12:00:00 AM" OR SleepDay = "5/12/2016 12:00:00 AM" THEN "5-Thursday" 
+       WHEN SleepDay = "4/15/2016 12:00:00 AM" OR SleepDay = "4/22/2016 12:00:00 AM" OR SleepDay = "4/29/2016 12:00:00 AM" OR SleepDay = "5/6/2016 12:00:00 AM" THEN "6-Friday" 
+       WHEN SleepDay = "4/16/2016 12:00:00 AM" OR SleepDay = "4/23/2016 12:00:00 AM" OR SleepDay = "4/30/2016 12:00:00 AM" OR SleepDay = "5/7/2016 12:00:00 AM" THEN "7-sabado" 
+       WHEN SleepDay = "4/17/2016 12:00:00 AM" OR SleepDay = "4/24/2016 12:00:00 AM" OR SleepDay = "5/1/2016 12:00:00 AM" OR SleepDay = "5/8/2016 12:00:00 AM" THEN "1-Sunday" 
+       ELSE 0 end as diadasemana FROM "sleepDay_merged" ')
+```
+
+        
+
+```{r}
+ggplot(data=semana1) +
+  geom_point(mapping=aes(x=TotalDistance, y= Calories, color = diadasemana ))+
+  labs (title = "CALORIES BURN vs TOTAL DISTANCE ", subtitle = "by weekday", 
+        caption= " Created by Yuri Faria Frota ", x = "Total distance (km)", y = "Calories burn")
+```
+
+** On a weekday distribution, we can observe that there is no noticed discrepancies. In other words, the users doesn’t have different activity habits during weekdays or weekends.**
+```{r}
+ggplot(data=semana1) +
+  geom_boxplot(mapping=aes(x=diadasemana, y= Calories, fill = diadasemana ))+
+  labs (title = "CALORIES BURN X WEEKDAY ", subtitle = " ", 
+        caption= " Created by Yuri Faria Frota ", x = "Weekdays", y = "Calories burn")
+```
+
+
+
+```{r}
+semanasono %>% 
+  group_by(diadasemana) %>% 
+  summarise(totalsono = mean(TotalMinutesAsleep)) %>% 
+  ggplot(aes(x = diadasemana, y = totalsono/60, fill = diadasemana)) +
+  geom_col() +
+  labs (title = "Sleep hours vs. Weekday", subtitle = "from smartwatch users ", 
+        caption= " Created by Yuri Faria Frota ", x = " Weekdays ", y = "Hours of sleep") + theme(legend.position = "none") 
+```
+
+**We can see a slight increase on sleep hours, on Sundays and Wednesdays. **
+
+```{r}
+semana1 %>% 
+  group_by(diadasemana) %>% 
+  summarise( meansedentaryminutes= mean(SedentaryMinutes) ) %>% 
+  ggplot(aes(x = diadasemana, y = (meansedentaryminutes/60), fill = diadasemana)) +
+  geom_col() +
+  labs (title = "Avg sedentary hours vs. Weekdays", subtitle = "from smart watch users", 
+        caption= "Created by Yuri Faria Frota", x = "Weekdays", y = "Sedentary time") + theme(legend.position = "none") 
+
+```
+
+**The plot above represents the mean sedentary hours, by weekday. Note that there is a slight difference, showing that in general, people keep on sedentary activities during all days, including weekends.**
+
+## **PHASE 5 - SHARE** 
+
+The analysis give us a few conclusions:
+On average, the users of this smart device are sedentary, and sleep little, with poor activities during all week. This helps us to find out one major characteristic from the users: **They are people who need to improve their life quality**
+
+Through the plots we could see the importance to keep in activity, and also with high activity intensities, generating significant increase in calories consumption.
+We also observer that the simple fact of walk (light activity) is enough to keep a good rate of activity, resulting in significant impacts on calories consumption. Keep in activity is the major thing!
+
+**Suggestions: *
+
+
+
+
+*We want to improve life quality from our users> Emphasize the most important characteristics, and show them the evolution of their daily habits, through data feedback, could make them more engaged with their life style habits, and consequently, with bellabeat services and devices.
+
+*Creating a well structures database coming from bellabeat devices, to direct the insights into a more efficient way.
+
+*The calories consumption does not vary accordingly to weekdays. We could encourage them to have more activities or weekends, through “deliverables”, or a “gamification” system. 
+
+*A more completed data about weight and sleep characteristics could bring us important information. It is very important to create more efficient ways to obtain these data, and do a research about the real motive that make this data hard to obtain.
